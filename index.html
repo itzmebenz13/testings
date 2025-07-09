@@ -3,388 +3,495 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STYLEVOX - Modern Fashion</title>
+    <title>TERMINAL ACCESS</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Google Fonts: Inter -->
+    <!-- Google Fonts: VT323 for retro terminal look -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     
     <!-- Feather Icons -->
     <script src="https://unpkg.com/feather-icons"></script>
 
     <style>
-        /* Custom styles for animations and specific UI elements */
+        /* Custom styles for the hacker theme */
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8f8f8;
-            color: #1a1a1a;
+            font-family: 'VT323', monospace;
+            background-color: #0d0d0d;
+            color: #00ff41;
+            text-shadow: 0 0 5px #00ff41, 0 0 10px #00ff41;
         }
 
-        /* Animation for elements fading in on scroll */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Matrix background effect */
+        #matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
         }
 
-        .fade-in-element {
-            animation: fadeIn 0.8s ease-out forwards;
-            opacity: 0;
+        /* Blinking cursor effect */
+        .blinking-cursor {
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            from, to { border-right-color: transparent; }
+            50% { border-right-color: #00ff41; }
         }
 
-        /* Hero section background animation */
-        .hero-bg {
-            background-image: url('https://placehold.co/1920x1080/e2e8f0/1a1a1a?text=STYLEVOX');
-            background-size: cover;
-            background-position: center;
-            animation: zoom-in 20s ease-out infinite alternate;
+        /* Glitch effect for text */
+        @keyframes glitch {
+            2%, 64% { transform: translate(2px, 0) skew(0deg); }
+            4%, 60% { transform: translate(-2px, 0) skew(0deg); }
+            62% { transform: translate(0, 0) skew(5deg); }
+        }
+        .glitch {
+            animation: glitch 1s linear infinite;
         }
 
-        @keyframes zoom-in {
-            from { transform: scale(1); }
-            to { transform: scale(1.1); }
+        /* Custom UI elements styling */
+        .terminal-window {
+            background: rgba(0, 0, 0, 0.75);
+            border: 1px solid #00ff41;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+            backdrop-filter: blur(5px);
         }
-
-        /* Product card hover effect */
-        .product-card .product-image {
-            transition: transform 0.4s ease;
+        .terminal-button {
+            background-color: transparent;
+            border: 1px solid #00ff41;
+            color: #00ff41;
+            text-shadow: inherit;
+            transition: all 0.3s ease;
         }
-        .product-card:hover .product-image {
-            transform: scale(1.05);
+        .terminal-button:hover {
+            background-color: #00ff41;
+            color: #0d0d0d;
+            text-shadow: none;
+            box-shadow: 0 0 20px #00ff41;
         }
-        .product-card .add-to-cart-btn {
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
+        .terminal-input {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #00ff41;
+            color: #00ff41;
+            text-shadow: inherit;
         }
-        .product-card:hover .add-to-cart-btn {
-            transform: translateY(0);
-        }
-
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555;
+        .terminal-input:focus {
+            outline: none;
+            box-shadow: 0 1px 0 #00ff41;
         }
         
-        /* Mobile menu transition */
-        #mobile-menu {
-            transition: transform 0.3s ease-in-out;
+        /* Game button styles */
+        .game-btn {
+            transition: all 0.1s ease-in-out;
+        }
+        .game-btn.active {
+            filter: brightness(2.5);
+            transform: scale(1.05);
         }
     </style>
 </head>
-<body class="overflow-x-hidden">
+<body class="overflow-hidden">
 
-    <!-- Announcement Bar -->
-    <div class="bg-black text-white text-center p-2 text-sm font-semibold tracking-wider">
-        <p>✨ FREE SHIPPING ON ORDERS OVER $50 ✨</p>
+    <canvas id="matrix-bg"></canvas>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 terminal-window">
+        <div class="w-full max-w-sm text-center">
+            <h1 id="login-title" class="text-4xl md:text-5xl mb-8"></h1>
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label for="username" class="block text-left mb-2 text-lg">> USERNAME:</label>
+                    <input type="text" id="username" class="terminal-input w-full p-2 text-xl" required>
+                </div>
+                <div>
+                    <label for="password" class="block text-left mb-2 text-lg">> PASSWORD:</label>
+                    <input type="password" id="password" class="terminal-input w-full p-2 text-xl" required>
+                </div>
+                <button type="submit" class="terminal-button w-full py-3 text-2xl mt-4">[INITIATE CONNECTION]</button>
+            </form>
+            <p id="login-status" class="mt-4 text-lg h-6"></p>
+        </div>
     </div>
 
-    <!-- Header -->
-    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-40 shadow-sm">
-        <div class="container mx-auto px-4">
-            <div class="flex justify-between items-center h-20">
-                <!-- Mobile Menu Toggle -->
-                <button id="mobile-menu-toggle" class="lg:hidden text-gray-700">
-                    <i data-feather="menu" class="w-6 h-6"></i>
-                </button>
+    <!-- Main Interface (hidden by default) -->
+    <main id="main-interface" class="hidden h-screen flex flex-col">
+        <!-- Header -->
+        <header class="terminal-window flex justify-between items-center p-3 text-sm flex-shrink-0">
+            <div>
+                <p>STATUS: <span class="text-yellow-400">SECURE_CHANNEL_ESTABLISHED</span></p>
+                <p>USER: <span id="display-username" class="text-white"></span></p>
+                <p>UID: <span id="display-userid" class="text-white text-xs"></span></p>
+            </div>
+            <button id="logout-btn" class="terminal-button px-4 py-2">[LOGOUT]</button>
+        </header>
 
-                <!-- Logo -->
-                <a href="#" class="text-3xl font-extrabold tracking-tighter text-gray-900">
-                    STYLEVOX
-                </a>
-
-                <!-- Desktop Navigation -->
-                <nav class="hidden lg:flex items-center space-x-8">
-                    <a href="#" class="text-gray-600 hover:text-black font-semibold transition duration-300">New In</a>
-                    <a href="#" class="text-gray-600 hover:text-black font-semibold transition duration-300">Clothing</a>
-                    <a href="#" class="text-gray-600 hover:text-black font-semibold transition duration-300">Dresses</a>
-                    <a href="#" class="text-gray-600 hover:text-black font-semibold transition duration-300">Tops</a>
-                    <a href="#" class="text-gray-600 hover:text-black font-semibold transition duration-300">Shoes & Accs</a>
-                    <a href="#" class="text-pink-500 hover:text-pink-600 font-bold transition duration-300">SALE</a>
-                </nav>
-
-                <!-- Icons -->
-                <div class="flex items-center space-x-4">
-                    <button class="text-gray-700 hover:text-black transition duration-300"><i data-feather="search" class="w-5 h-5"></i></button>
-                    <button class="text-gray-700 hover:text-black transition duration-300"><i data-feather="user" class="w-5 h-5"></i></button>
-                    <button class="text-gray-700 hover:text-black transition duration-300 relative">
-                        <i data-feather="heart" class="w-5 h-5"></i>
-                        <span class="absolute -top-1 -right-1 bg-pink-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">3</span>
-                    </button>
-                    <button class="text-gray-700 hover:text-black transition duration-300 relative">
-                        <i data-feather="shopping-bag" class="w-5 h-5"></i>
-                        <span class="absolute -top-1 -right-1 bg-pink-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">2</span>
-                    </button>
+        <!-- Content Area -->
+        <div class="flex-grow p-4 md:p-6 overflow-y-auto">
+            <div id="game-container" class="terminal-window p-6 max-w-2xl mx-auto text-center">
+                <h2 id="game-title" class="text-3xl mb-4">ACCESS PROTOCOL: MEMORY_GRID</h2>
+                <p id="game-instructions" class="mb-6">REPEAT THE SEQUENCE TO GAIN SYSTEM ACCESS. FAILURE RESULTS IN LOCKOUT.</p>
+                
+                <div id="game-grid" class="grid grid-cols-2 gap-4 max-w-sm mx-auto mb-6">
+                    <button data-key="0" class="game-btn h-24 md:h-32 rounded-lg" style="background-color: #1d4ed8;"></button>
+                    <button data-key="1" class="game-btn h-24 md:h-32 rounded-lg" style="background-color: #b91c1c;"></button>
+                    <button data-key="2" class="game-btn h-24 md:h-32 rounded-lg" style="background-color: #15803d;"></button>
+                    <button data-key="3" class="game-btn h-24 md:h-32 rounded-lg" style="background-color: #facc15;"></button>
                 </div>
+
+                <p id="game-status" class="text-xl h-8 mb-4">LEVEL: <span id="level-display">1</span></p>
+                <button id="start-game-btn" class="terminal-button px-8 py-3 text-2xl">[START TEST]</button>
+            </div>
+
+            <div id="access-granted-container" class="hidden terminal-window p-6 max-w-2xl mx-auto text-center">
+                <h2 class="text-4xl text-green-400 mb-4 glitch">ACCESS GRANTED</h2>
+                <p class="text-xl mb-2">EXCLUSIVE LINK UNLOCKED.</p>
+                <a id="exclusive-link" href="https://hchejes.itzmebenz13.workers.dev/" target="_blank" class="terminal-button inline-block px-8 py-3 text-2xl my-4">[ACCESS PAYLOAD]</a>
+                <p class="text-lg">TIME REMAINING:</p>
+                <p id="countdown-timer" class="text-3xl font-bold my-2"></p>
+                <p class="text-sm text-yellow-400">NOTE: THIS IS A ONE-TIME ACCESS LINK. DO NOT CLOSE THE TARGET WINDOW.</p>
             </div>
         </div>
-    </header>
-    
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="lg:hidden fixed top-0 left-0 w-64 h-full bg-white shadow-lg z-50 transform -translate-x-full">
-        <div class="p-5 border-b">
-            <a href="#" class="text-2xl font-extrabold tracking-tighter text-gray-900">STYLEVOX</a>
-        </div>
-        <nav class="flex flex-col p-5 space-y-4">
-            <a href="#" class="text-gray-700 hover:text-black font-semibold">New In</a>
-            <a href="#" class="text-gray-700 hover:text-black font-semibold">Clothing</a>
-            <a href="#" class="text-gray-700 hover:text-black font-semibold">Dresses</a>
-            <a href="#" class="text-gray-700 hover:text-black font-semibold">Tops</a>
-            <a href="#" class="text-gray-700 hover:text-black font-semibold">Shoes & Accs</a>
-            <a href="#" class="text-pink-500 hover:text-pink-600 font-bold">SALE</a>
-        </nav>
-    </div>
-    <div id="mobile-menu-overlay" class="lg:hidden fixed inset-0 bg-black/50 z-40 hidden"></div>
-
-
-    <main>
-        <!-- Hero Section -->
-        <section class="relative h-[85vh] min-h-[500px] flex items-center justify-center text-white text-center overflow-hidden">
-            <div class="absolute inset-0 hero-bg"></div>
-            <div class="absolute inset-0 bg-black/40"></div>
-            <div class="relative z-10 p-4 animate-fade-in-up">
-                <h1 class="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tighter mb-4">SUMMER '25 IS HERE</h1>
-                <p class="text-lg md:text-xl max-w-2xl mx-auto mb-8 font-light">Your story, your style. Discover fresh fits and vibrant looks for the new season.</p>
-                <button class="bg-white text-black font-bold py-3 px-10 rounded-full text-lg hover:bg-gray-200 transition duration-300 transform hover:scale-105">
-                    SHOP NOW
-                </button>
-            </div>
-        </section>
-
-        <!-- Category Highlights Section -->
-        <section class="py-16 px-4 container mx-auto">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                <!-- Category 1 -->
-                <div class="group relative rounded-lg overflow-hidden shadow-lg transform hover:-translate-y-2 transition-transform duration-300 scroll-observer">
-                    <img src="https://placehold.co/600x800/d1fae5/1a1a1a?text=Dresses" alt="Dresses" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-black/30"></div>
-                    <div class="absolute bottom-0 left-0 p-6">
-                        <h3 class="text-white text-2xl font-bold">Dresses</h3>
-                        <p class="text-white/80 text-sm">Shop Now &rarr;</p>
-                    </div>
-                </div>
-                <!-- Category 2 -->
-                <div class="group relative rounded-lg overflow-hidden shadow-lg transform hover:-translate-y-2 transition-transform duration-300 scroll-observer">
-                    <img src="https://placehold.co/600x800/e0e7ff/1a1a1a?text=Tops" alt="Tops" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-black/30"></div>
-                    <div class="absolute bottom-0 left-0 p-6">
-                        <h3 class="text-white text-2xl font-bold">Tops</h3>
-                        <p class="text-white/80 text-sm">Shop Now &rarr;</p>
-                    </div>
-                </div>
-                <!-- Category 3 -->
-                <div class="group relative rounded-lg overflow-hidden shadow-lg transform hover:-translate-y-2 transition-transform duration-300 scroll-observer">
-                    <img src="https://placehold.co/600x800/fee2e2/1a1a1a?text=Swimwear" alt="Swimwear" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-black/30"></div>
-                    <div class="absolute bottom-0 left-0 p-6">
-                        <h3 class="text-white text-2xl font-bold">Swimwear</h3>
-                        <p class="text-white/80 text-sm">Shop Now &rarr;</p>
-                    </div>
-                </div>
-                <!-- Category 4 -->
-                <div class="group relative rounded-lg overflow-hidden shadow-lg transform hover:-translate-y-2 transition-transform duration-300 scroll-observer">
-                    <img src="https://placehold.co/600x800/fef3c7/1a1a1a?text=Accessories" alt="Accessories" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-black/30"></div>
-                    <div class="absolute bottom-0 left-0 p-6">
-                        <h3 class="text-white text-2xl font-bold">Accessories</h3>
-                        <p class="text-white/80 text-sm">Shop Now &rarr;</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Trending Products Section -->
-        <section class="py-16 bg-white">
-            <div class="container mx-auto px-4">
-                <div class="text-center mb-12 scroll-observer">
-                    <h2 class="text-4xl font-extrabold tracking-tight">Trending Now</h2>
-                    <p class="text-gray-500 mt-2">The styles everyone's talking about.</p>
-                </div>
-                <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8">
-                    <!-- Product Card Example -->
-                    <div class="product-card group relative scroll-observer">
-                        <div class="relative overflow-hidden rounded-lg bg-gray-100">
-                            <img src="https://placehold.co/600x800/f3e8ff/4c1d95?text=Item+1" alt="Product 1" class="w-full h-auto object-cover product-image">
-                            <div class="absolute top-2 left-2 bg-white text-pink-500 text-xs font-bold px-2 py-1 rounded-full">-30%</div>
-                            <button class="absolute top-2 right-2 bg-white/50 backdrop-blur-sm p-2 rounded-full text-gray-700 hover:bg-white hover:text-pink-500 transition-all duration-300">
-                                <i data-feather="heart" class="w-5 h-5"></i>
-                            </button>
-                            <div class="absolute bottom-0 left-0 right-0 p-2 add-to-cart-btn">
-                                <button class="w-full bg-black text-white text-sm font-bold py-2.5 rounded-md hover:bg-gray-800 transition-colors duration-300">Quick Add</button>
-                            </div>
-                        </div>
-                        <div class="mt-3 text-center">
-                            <h3 class="text-sm font-semibold text-gray-800">Floral Print Midi Dress</h3>
-                            <p class="text-md font-bold text-gray-900 mt-1">$49.99 <span class="text-gray-400 line-through text-sm">$69.99</span></p>
-                        </div>
-                    </div>
-                    <!-- Repeat Product Card for demo -->
-                    <div class="product-card group relative scroll-observer" style="animation-delay: 0.1s;">
-                        <div class="relative overflow-hidden rounded-lg bg-gray-100">
-                            <img src="https://placehold.co/600x800/e0f2fe/0c4a6e?text=Item+2" alt="Product 2" class="w-full h-auto object-cover product-image">
-                            <button class="absolute top-2 right-2 bg-white/50 backdrop-blur-sm p-2 rounded-full text-gray-700 hover:bg-white hover:text-pink-500 transition-all duration-300">
-                                <i data-feather="heart" class="w-5 h-5"></i>
-                            </button>
-                            <div class="absolute bottom-0 left-0 right-0 p-2 add-to-cart-btn">
-                                <button class="w-full bg-black text-white text-sm font-bold py-2.5 rounded-md hover:bg-gray-800 transition-colors duration-300">Quick Add</button>
-                            </div>
-                        </div>
-                        <div class="mt-3 text-center">
-                            <h3 class="text-sm font-semibold text-gray-800">Ribbed Knit Crop Top</h3>
-                            <p class="text-md font-bold text-gray-900 mt-1">$24.99</p>
-                        </div>
-                    </div>
-                    <div class="product-card group relative scroll-observer" style="animation-delay: 0.2s;">
-                        <div class="relative overflow-hidden rounded-lg bg-gray-100">
-                            <img src="https://placehold.co/600x800/dcfce7/166534?text=Item+3" alt="Product 3" class="w-full h-auto object-cover product-image">
-                             <div class="absolute top-2 left-2 bg-white text-green-500 text-xs font-bold px-2 py-1 rounded-full">NEW</div>
-                            <button class="absolute top-2 right-2 bg-white/50 backdrop-blur-sm p-2 rounded-full text-gray-700 hover:bg-white hover:text-pink-500 transition-all duration-300">
-                                <i data-feather="heart" class="w-5 h-5"></i>
-                            </button>
-                            <div class="absolute bottom-0 left-0 right-0 p-2 add-to-cart-btn">
-                                <button class="w-full bg-black text-white text-sm font-bold py-2.5 rounded-md hover:bg-gray-800 transition-colors duration-300">Quick Add</button>
-                            </div>
-                        </div>
-                        <div class="mt-3 text-center">
-                            <h3 class="text-sm font-semibold text-gray-800">High-Waist Denim Shorts</h3>
-                            <p class="text-md font-bold text-gray-900 mt-1">$39.99</p>
-                        </div>
-                    </div>
-                    <div class="product-card group relative scroll-observer" style="animation-delay: 0.3s;">
-                        <div class="relative overflow-hidden rounded-lg bg-gray-100">
-                            <img src="https://placehold.co/600x800/fee2e2/9f1239?text=Item+4" alt="Product 4" class="w-full h-auto object-cover product-image">
-                            <button class="absolute top-2 right-2 bg-white/50 backdrop-blur-sm p-2 rounded-full text-gray-700 hover:bg-white hover:text-pink-500 transition-all duration-300">
-                                <i data-feather="heart" class="w-5 h-5"></i>
-                            </button>
-                            <div class="absolute bottom-0 left-0 right-0 p-2 add-to-cart-btn">
-                                <button class="w-full bg-black text-white text-sm font-bold py-2.5 rounded-md hover:bg-gray-800 transition-colors duration-300">Quick Add</button>
-                            </div>
-                        </div>
-                        <div class="mt-3 text-center">
-                            <h3 class="text-sm font-semibold text-gray-800">Platform Sandals</h3>
-                            <p class="text-md font-bold text-gray-900 mt-1">$55.00</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="text-center mt-12">
-                    <button class="bg-gray-900 text-white font-bold py-3 px-10 rounded-full hover:bg-gray-700 transition duration-300 transform hover:scale-105">
-                        View All
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Newsletter Signup Section -->
-        <section class="bg-pink-500 text-white py-20">
-            <div class="container mx-auto px-4 text-center scroll-observer">
-                <h2 class="text-4xl font-extrabold tracking-tight mb-3">JOIN THE CLUB</h2>
-                <p class="max-w-xl mx-auto mb-8">Get 15% off your first order and be the first to know about new arrivals, sales & promos!</p>
-                <form class="max-w-md mx-auto flex">
-                    <input type="email" placeholder="Enter your email" class="w-full rounded-l-full py-3 px-6 text-gray-800 focus:outline-none focus:ring-2 focus:ring-white">
-                    <button type="submit" class="bg-black text-white font-bold py-3 px-8 rounded-r-full hover:bg-gray-800 transition-colors duration-300">Subscribe</button>
-                </form>
-            </div>
-        </section>
     </main>
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-white pt-16 pb-8">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-                <!-- Company Info -->
-                <div>
-                    <h4 class="font-bold text-lg mb-4">COMPANY INFO</h4>
-                    <ul class="space-y-2 text-gray-400">
-                        <li><a href="#" class="hover:text-white transition">About STYLEVOX</a></li>
-                        <li><a href="#" class="hover:text-white transition">Careers</a></li>
-                        <li><a href="#" class="hover:text-white transition">Social Responsibility</a></li>
-                        <li><a href="#" class="hover:text-white transition">Affiliate Program</a></li>
-                    </ul>
-                </div>
-                <!-- Help & Support -->
-                <div>
-                    <h4 class="font-bold text-lg mb-4">HELP & SUPPORT</h4>
-                    <ul class="space-y-2 text-gray-400">
-                        <li><a href="#" class="hover:text-white transition">Shipping Info</a></li>
-                        <li><a href="#" class="hover:text-white transition">Returns & Exchanges</a></li>
-                        <li><a href="#" class="hover:text-white transition">How to Order</a></li>
-                        <li><a href="#" class="hover:text-white transition">Contact Us</a></li>
-                    </ul>
-                </div>
-                <!-- Customer Care -->
-                <div>
-                    <h4 class="font-bold text-lg mb-4">CUSTOMER CARE</h4>
-                    <ul class="space-y-2 text-gray-400">
-                        <li><a href="#" class="hover:text-white transition">Track Your Order</a></li>
-                        <li><a href="#" class="hover:text-white transition">Size Guide</a></li>
-                        <li><a href="#" class="hover:text-white transition">FAQs</a></li>
-                    </ul>
-                </div>
-                <!-- Social & Apps -->
-                <div>
-                    <h4 class="font-bold text-lg mb-4">FIND US ON</h4>
-                    <div class="flex space-x-4 mb-4">
-                        <a href="#" class="text-gray-400 hover:text-white transition"><i data-feather="facebook" class="w-6 h-6"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white transition"><i data-feather="instagram" class="w-6 h-6"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white transition"><i data-feather="twitter" class="w-6 h-6"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white transition"><i data-feather="youtube" class="w-6 h-6"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
-                <p>&copy; 2025 STYLEVOX. All Rights Reserved.</p>
-                <div class="flex space-x-4 mt-4 md:mt-0">
-                    <a href="#" class="hover:text-white transition">Terms & Conditions</a>
-                    <a href="#" class="hover:text-white transition">Privacy Policy</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-
-    <script>
-        // Initialize Feather Icons
-        feather.replace();
-
-        // Scroll Animation Logic
-        const scrollObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('fade-in-element');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1 });
-
-        document.querySelectorAll('.scroll-observer').forEach(el => {
-            scrollObserver.observe(el);
-        });
+        // --- CONFIG & INITIALIZATION ---
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "DEMO", authDomain: "DEMO", projectId: "DEMO" };
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'hacker-game-default';
         
-        // Mobile Menu Logic
-        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        function toggleMenu() {
-            mobileMenu.classList.toggle('-translate-x-full');
-            mobileMenuOverlay.classList.toggle('hidden');
-            document.body.classList.toggle('overflow-hidden');
+        let currentUser = null;
+        let userId = null;
+
+        // --- UI ELEMENTS ---
+        const loginScreen = document.getElementById('login-screen');
+        const mainInterface = document.getElementById('main-interface');
+        const loginForm = document.getElementById('login-form');
+        const usernameInput = document.getElementById('username');
+        const loginStatus = document.getElementById('login-status');
+        const logoutBtn = document.getElementById('logout-btn');
+        const displayUsername = document.getElementById('display-username');
+        const displayUserid = document.getElementById('display-userid');
+
+        const gameContainer = document.getElementById('game-container');
+        const accessGrantedContainer = document.getElementById('access-granted-container');
+        const countdownTimer = document.getElementById('countdown-timer');
+        const startGameBtn = document.getElementById('start-game-btn');
+        const levelDisplay = document.getElementById('level-display');
+        const gameStatus = document.getElementById('game-status');
+        const gameGrid = document.getElementById('game-grid');
+        
+        // --- GAME LOGIC ---
+        let sequence = [];
+        let playerSequence = [];
+        let level = 1;
+        let gameActive = false;
+        let countdownInterval;
+
+        const PRIZES = {
+            3: { duration: 30 * 60 * 1000, chance: 0.8 }, // 30 minutes
+            5: { duration: 60 * 60 * 1000, chance: 0.5 }, // 1 hour
+            7: { duration: 3 * 60 * 60 * 1000, chance: 0.2 }, // 3 hours
+            9: { duration: 24 * 60 * 60 * 1000, chance: 0.05 } // 1 day
+        };
+
+        // --- HELPER FUNCTIONS ---
+        function typeWriter(element, text, speed = 50) {
+            let i = 0;
+            element.innerHTML = "";
+            element.classList.add('blinking-cursor');
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    element.classList.remove('blinking-cursor');
+                }
+            }
+            type();
         }
 
-        mobileMenuToggle.addEventListener('click', toggleMenu);
-        mobileMenuOverlay.addEventListener('click', toggleMenu);
+        // --- AUTHENTICATION & DATA ---
+        async function checkUserAccess() {
+            if (!userId) return;
+            const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/gameAccess`);
+            const docSnap = await getDoc(userDocRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const expires = data.accessExpires.toDate();
+                if (expires > new Date()) {
+                    showAccessGranted(expires);
+                } else {
+                    showGame();
+                }
+            } else {
+                showGame();
+            }
+        }
+
+        function showAccessGranted(expires) {
+            gameContainer.classList.add('hidden');
+            accessGrantedContainer.classList.remove('hidden');
+            
+            if(countdownInterval) clearInterval(countdownInterval);
+
+            countdownInterval = setInterval(() => {
+                const now = new Date();
+                const distance = expires.getTime() - now.getTime();
+
+                if (distance < 0) {
+                    clearInterval(countdownInterval);
+                    countdownTimer.textContent = "EXPIRED";
+                    setTimeout(showGame, 3000);
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                countdownTimer.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                if (days > 0) {
+                    countdownTimer.textContent = `${days}d ${countdownTimer.textContent}`;
+                }
+
+            }, 1000);
+        }
+
+        function showGame() {
+            gameContainer.classList.remove('hidden');
+            accessGrantedContainer.classList.add('hidden');
+            if(countdownInterval) clearInterval(countdownInterval);
+            resetGame();
+        }
+
+        async function grantAccess(duration) {
+            const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/gameAccess`);
+            const expirationTime = new Date(Date.now() + duration);
+            await setDoc(userDocRef, { accessExpires: expirationTime, grantedAt: serverTimestamp() });
+            showAccessGranted(expirationTime);
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                userId = user.uid;
+                
+                const userProfileRef = doc(db, `artifacts/${appId}/users/${userId}/profile`);
+                const profileSnap = await getDoc(userProfileRef);
+                let username = "ANONYMOUS";
+                if (profileSnap.exists()) {
+                    username = profileSnap.data().username;
+                } else {
+                    // If profile doesn't exist, create it from input
+                    const storedUsername = localStorage.getItem('hacker_username');
+                    if (storedUsername) {
+                        username = storedUsername;
+                        await setDoc(userProfileRef, { username: username });
+                    }
+                }
+                
+                displayUsername.textContent = username;
+                displayUserid.textContent = userId;
+                loginScreen.classList.add('hidden');
+                mainInterface.classList.remove('hidden');
+                mainInterface.classList.add('flex');
+                
+                await checkUserAccess();
+
+            } else {
+                currentUser = null;
+                userId = null;
+                loginScreen.classList.remove('hidden');
+                mainInterface.classList.add('hidden');
+                mainInterface.classList.remove('flex');
+            }
+        });
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = usernameInput.value;
+            typeWriter(loginStatus, "AUTHENTICATING...", 30);
+            
+            try {
+                // Store username for retrieval after auth state change
+                localStorage.setItem('hacker_username', username);
+
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                typeWriter(loginStatus, "CONNECTION ESTABLISHED.", 30);
+            } catch (error) {
+                console.error("Login failed:", error);
+                typeWriter(loginStatus, `ERROR: ${error.code}`, 30);
+            }
+        });
+
+        logoutBtn.addEventListener('click', () => {
+            signOut(auth);
+            localStorage.removeItem('hacker_username');
+        });
+
+        // --- GAME IMPLEMENTATION ---
+        
+        function resetGame() {
+            sequence = [];
+            playerSequence = [];
+            level = 1;
+            gameActive = false;
+            levelDisplay.textContent = level;
+            startGameBtn.disabled = false;
+            typeWriter(gameStatus, "AWAITING TEST INITIATION.", 30);
+        }
+
+        async function nextLevel() {
+            levelDisplay.textContent = level;
+            playerSequence = [];
+            gameGrid.style.pointerEvents = 'none';
+            typeWriter(gameStatus, `GENERATING LEVEL ${level} SEQUENCE...`, 20);
+
+            sequence.push(Math.floor(Math.random() * 4));
+
+            await playSequence();
+            
+            gameGrid.style.pointerEvents = 'auto';
+            typeWriter(gameStatus, "YOUR TURN. REPLICATE SEQUENCE.", 30);
+        }
+
+        async function playSequence() {
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Pause before showing
+            for (const key of sequence) {
+                const button = document.querySelector(`.game-btn[data-key='${key}']`);
+                button.classList.add('active');
+                await new Promise(resolve => setTimeout(resolve, 400));
+                button.classList.remove('active');
+                await new Promise(resolve => setTimeout(resolve, 200));
+            }
+        }
+
+        function handlePlayerInput(key) {
+            if (!gameActive) return;
+            
+            const button = document.querySelector(`.game-btn[data-key='${key}']`);
+            button.classList.add('active');
+            setTimeout(() => button.classList.remove('active'), 150);
+
+            playerSequence.push(parseInt(key));
+            const currentStep = playerSequence.length - 1;
+
+            if (playerSequence[currentStep] !== sequence[currentStep]) {
+                gameOver();
+                return;
+            }
+
+            if (playerSequence.length === sequence.length) {
+                levelWon();
+            }
+        }
+
+        async function levelWon() {
+            typeWriter(gameStatus, "SEQUENCE CORRECT. ADVANCING...", 30);
+            gameGrid.style.pointerEvents = 'none';
+            
+            // Check for prize
+            const prizeInfo = PRIZES[level];
+            if (prizeInfo && Math.random() < prizeInfo.chance) {
+                typeWriter(gameStatus, `SYSTEM BREACH! ACCESS GRANTED FOR ${prizeInfo.duration / (60*1000)} MINS`, 30);
+                await grantAccess(prizeInfo.duration);
+                gameActive = false;
+                startGameBtn.disabled = false;
+                return;
+            }
+            
+            level++;
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            nextLevel();
+        }
+
+        function gameOver() {
+            typeWriter(gameStatus, "SEQUENCE MISMATCH. CONNECTION TERMINATED.", 30);
+            gameActive = false;
+            startGameBtn.disabled = false;
+            gameGrid.style.pointerEvents = 'auto';
+            // Optional: add a small lockout
+            setTimeout(resetGame, 3000);
+        }
+
+        startGameBtn.addEventListener('click', () => {
+            resetGame();
+            gameActive = true;
+            startGameBtn.disabled = true;
+            nextLevel();
+        });
+
+        gameGrid.addEventListener('click', (e) => {
+            if (e.target.matches('.game-btn')) {
+                handlePlayerInput(e.target.dataset.key);
+            }
+        });
+
+
+        // --- MATRIX BACKGROUND SCRIPT ---
+        const canvas = document.getElementById('matrix-bg');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}';
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(13, 13, 13, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#00ff41';
+            ctx.font = `${fontSize}px VT323`;
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 33);
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            drops.length = 0; // reset drops
+            const newColumns = canvas.width / fontSize;
+            for(let i=0; i < newColumns; i++) {
+                drops.push(1);
+            }
+        });
+
+        // --- INITIAL LOAD ---
+        window.onload = () => {
+            typeWriter(document.getElementById('login-title'), "AWAITING SECURE CONNECTION...", 75);
+            feather.replace();
+        };
 
     </script>
 </body>
