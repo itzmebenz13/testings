@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STYLEVOX - Modern Fashion</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+
+    <style>
+        /* Custom styles for animations and specific UI elements */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f8f8;
+            color: #1a1a1a;
+        }
+
+        /* Animation for elements fading in on scroll */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in-element {
+            animation: fadeIn 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        /* Hero section background animation */
+        .hero-bg {
+            background-image: url('https://placehold.co/1920x1080/e2e8f0/1a1a1a?text=STYLEVOX');
+            background-size: cover;
+            background-position: center;
+            animation: zoom-in 20s ease-out infinite alternate;
+        }
+
+        @keyframes zoom-in {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+
+        /* Product card hover effect */
+        .product-card .product-image {
+            transition: transform 0.4s ease;
+        }
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+        .product-card .add-to-cart-btn {
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        .product-card:hover .add-to-cart-btn {
+            transform: translateY(0);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        /* Mobile menu transition */
+        #mobile-menu {
+            transition: transform 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- Announcement Bar -->
+    <div class="bg-black text-white text-center p-2 text-sm font-semibold tracking-wider">
+        <p>✨ FREE SHIPPING ON ORDERS OVER $50 ✨</p>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-40 shadow-sm">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-20">
+                <!-- Mobile Menu Toggle -->
+                <button id="mobile-menu-toggle" class="lg:hidden text-gray-700">
+                    <i data-feather="menu" class="w-6 h-6"></i>
+                </button>
+
+                <!-- Logo -->
+                <a href="#" class="text-3xl font-extrabold tracking-tighter text-gray-900">
+                    STYLEVOX
+                </a>
+
+                <!-- Desktop Navigation -->
+                <nav class="hidden lg:flex items-center space-x-8">
+                    <a href="#" class="text-gray-600 hover:text-black font-semibold transition duration-300">New In</a>
+                    <a href="#" class="text-gray-600 hover:text-black font-semibold transition duration-300">Clothing</a>
+                    <a href="#" class="text-gray-600 hover:text-black font-semibold transition duration-300">Dresses</a>
+                    <a href="#" class="text-gray-600 hover:text-black font-semibold transition duration-300">Tops</a>
+                    <a href="#" class="text-gray-600 hover:text-black font-semibold transition duration-300">Shoes & Accs</a>
+                    <a href="#" class="text-pink-500 hover:text-pink-600 font-bold transition duration-300">SALE</a>
+                </nav>
+
+                <!-- Icons -->
+                <div class="flex items-center space-x-4">
+                    <button class="text-gray-700 hover:text-black transition duration-300"><i data-feather="search" class="w-5 h-5"></i></button>
+                    <button class="text-gray-700 hover:text-black transition duration-300"><i data-feather="user" class="w-5 h-5"></i></button>
+                    <button class="text-gray-700 hover:text-black transition duration-300 relative">
+                        <i data-feather="heart" class="w-5 h-5"></i>
+                        <span class="absolute -top-1 -right-1 bg-pink-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">3</span>
+                    </button>
+                    <button class="text-gray-700 hover:text-black transition duration-300 relative">
+                        <i data-feather="shopping-bag" class="w-5 h-5"></i>
+                        <span class="absolute -top-1 -right-1 bg-pink-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">2</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="lg:hidden fixed top-0 left-0 w-64 h-full bg-white shadow-lg z-50 transform -translate-x-full">
+        <div class="p-5 border-b">
+            <a href="#" class="text-2xl font-extrabold tracking-tighter text-gray-900">STYLEVOX</a>
+        </div>
+        <nav class="flex flex-col p-5 space-y-4">
+            <a href="#" class="text-gray-700 hover:text-black font-semibold">New In</a>
+            <a href="#" class="text-gray-700 hover:text-black font-semibold">Clothing</a>
+            <a href="#" class="text-gray-700 hover:text-black font-semibold">Dresses</a>
+            <a href="#" class="text-gray-700 hover:text-black font-semibold">Tops</a>
+            <a href="#" class="text-gray-700 hover:text-black font-semibold">Shoes & Accs</a>
+            <a href="#" class="text-pink-500 hover:text-pink-600 font-bold">SALE</a>
+        </nav>
+    </div>
+    <div id="mobile-menu-overlay" class="lg:hidden fixed inset-0 bg-black/50 z-40 hidden"></div>
+
+
+    <main>
+        <!-- Hero Section -->
+        <section class="relative h-[85vh] min-h-[500px] flex items-center justify-center text-white text-center overflow-hidden">
+            <div class="absolute inset-0 hero-bg"></div>
+            <div class="absolute inset-0 bg-black/40"></div>
+            <div class="relative z-10 p-4 animate-fade-in-up">
+                <h1 class="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tighter mb-4">SUMMER '25 IS HERE</h1>
+                <p class="text-lg md:text-xl max-w-2xl mx-auto mb-8 font-light">Your story, your style. Discover fresh fits and vibrant looks for the new season.</p>
+                <button class="bg-white text-black font-bold py-3 px-10 rounded-full text-lg hover:bg-gray-200 transition duration-300 transform hover:scale-105">
+                    SHOP NOW
+                </button>
+            </div>
+        </section>
+
+        <!-- Category Highlights Section -->
+        <section class="py-16 px-4 container mx-auto">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                <!-- Category 1 -->
+                <div class="group relative rounded-lg overflow-hidden shadow-lg transform hover:-translate-y-2 transition-transform duration-300 scroll-observer">
+                    <img src="https://placehold.co/600x800/d1fae5/1a1a1a?text=Dresses" alt="Dresses" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-black/30"></div>
+                    <div class="absolute bottom-0 left-0 p-6">
+                        <h3 class="text-white text-2xl font-bold">Dresses</h3>
+                        <p class="text-white/80 text-sm">Shop Now &rarr;</p>
+                    </div>
+                </div>
+                <!-- Category 2 -->
+                <div class="group relative rounded-lg overflow-hidden shadow-lg transform hover:-translate-y-2 transition-transform duration-300 scroll-observer">
+                    <img src="https://placehold.co/600x800/e0e7ff/1a1a1a?text=Tops" alt="Tops" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-black/30"></div>
+                    <div class="absolute bottom-0 left-0 p-6">
+                        <h3 class="text-white text-2xl font-bold">Tops</h3>
+                        <p class="text-white/80 text-sm">Shop Now &rarr;</p>
+                    </div>
+                </div>
+                <!-- Category 3 -->
+                <div class="group relative rounded-lg overflow-hidden shadow-lg transform hover:-translate-y-2 transition-transform duration-300 scroll-observer">
+                    <img src="https://placehold.co/600x800/fee2e2/1a1a1a?text=Swimwear" alt="Swimwear" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-black/30"></div>
+                    <div class="absolute bottom-0 left-0 p-6">
+                        <h3 class="text-white text-2xl font-bold">Swimwear</h3>
+                        <p class="text-white/80 text-sm">Shop Now &rarr;</p>
+                    </div>
+                </div>
+                <!-- Category 4 -->
+                <div class="group relative rounded-lg overflow-hidden shadow-lg transform hover:-translate-y-2 transition-transform duration-300 scroll-observer">
+                    <img src="https://placehold.co/600x800/fef3c7/1a1a1a?text=Accessories" alt="Accessories" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-black/30"></div>
+                    <div class="absolute bottom-0 left-0 p-6">
+                        <h3 class="text-white text-2xl font-bold">Accessories</h3>
+                        <p class="text-white/80 text-sm">Shop Now &rarr;</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trending Products Section -->
+        <section class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12 scroll-observer">
+                    <h2 class="text-4xl font-extrabold tracking-tight">Trending Now</h2>
+                    <p class="text-gray-500 mt-2">The styles everyone's talking about.</p>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8">
+                    <!-- Product Card Example -->
+                    <div class="product-card group relative scroll-observer">
+                        <div class="relative overflow-hidden rounded-lg bg-gray-100">
+                            <img src="https://placehold.co/600x800/f3e8ff/4c1d95?text=Item+1" alt="Product 1" class="w-full h-auto object-cover product-image">
+                            <div class="absolute top-2 left-2 bg-white text-pink-500 text-xs font-bold px-2 py-1 rounded-full">-30%</div>
+                            <button class="absolute top-2 right-2 bg-white/50 backdrop-blur-sm p-2 rounded-full text-gray-700 hover:bg-white hover:text-pink-500 transition-all duration-300">
+                                <i data-feather="heart" class="w-5 h-5"></i>
+                            </button>
+                            <div class="absolute bottom-0 left-0 right-0 p-2 add-to-cart-btn">
+                                <button class="w-full bg-black text-white text-sm font-bold py-2.5 rounded-md hover:bg-gray-800 transition-colors duration-300">Quick Add</button>
+                            </div>
+                        </div>
+                        <div class="mt-3 text-center">
+                            <h3 class="text-sm font-semibold text-gray-800">Floral Print Midi Dress</h3>
+                            <p class="text-md font-bold text-gray-900 mt-1">$49.99 <span class="text-gray-400 line-through text-sm">$69.99</span></p>
+                        </div>
+                    </div>
+                    <!-- Repeat Product Card for demo -->
+                    <div class="product-card group relative scroll-observer" style="animation-delay: 0.1s;">
+                        <div class="relative overflow-hidden rounded-lg bg-gray-100">
+                            <img src="https://placehold.co/600x800/e0f2fe/0c4a6e?text=Item+2" alt="Product 2" class="w-full h-auto object-cover product-image">
+                            <button class="absolute top-2 right-2 bg-white/50 backdrop-blur-sm p-2 rounded-full text-gray-700 hover:bg-white hover:text-pink-500 transition-all duration-300">
+                                <i data-feather="heart" class="w-5 h-5"></i>
+                            </button>
+                            <div class="absolute bottom-0 left-0 right-0 p-2 add-to-cart-btn">
+                                <button class="w-full bg-black text-white text-sm font-bold py-2.5 rounded-md hover:bg-gray-800 transition-colors duration-300">Quick Add</button>
+                            </div>
+                        </div>
+                        <div class="mt-3 text-center">
+                            <h3 class="text-sm font-semibold text-gray-800">Ribbed Knit Crop Top</h3>
+                            <p class="text-md font-bold text-gray-900 mt-1">$24.99</p>
+                        </div>
+                    </div>
+                    <div class="product-card group relative scroll-observer" style="animation-delay: 0.2s;">
+                        <div class="relative overflow-hidden rounded-lg bg-gray-100">
+                            <img src="https://placehold.co/600x800/dcfce7/166534?text=Item+3" alt="Product 3" class="w-full h-auto object-cover product-image">
+                             <div class="absolute top-2 left-2 bg-white text-green-500 text-xs font-bold px-2 py-1 rounded-full">NEW</div>
+                            <button class="absolute top-2 right-2 bg-white/50 backdrop-blur-sm p-2 rounded-full text-gray-700 hover:bg-white hover:text-pink-500 transition-all duration-300">
+                                <i data-feather="heart" class="w-5 h-5"></i>
+                            </button>
+                            <div class="absolute bottom-0 left-0 right-0 p-2 add-to-cart-btn">
+                                <button class="w-full bg-black text-white text-sm font-bold py-2.5 rounded-md hover:bg-gray-800 transition-colors duration-300">Quick Add</button>
+                            </div>
+                        </div>
+                        <div class="mt-3 text-center">
+                            <h3 class="text-sm font-semibold text-gray-800">High-Waist Denim Shorts</h3>
+                            <p class="text-md font-bold text-gray-900 mt-1">$39.99</p>
+                        </div>
+                    </div>
+                    <div class="product-card group relative scroll-observer" style="animation-delay: 0.3s;">
+                        <div class="relative overflow-hidden rounded-lg bg-gray-100">
+                            <img src="https://placehold.co/600x800/fee2e2/9f1239?text=Item+4" alt="Product 4" class="w-full h-auto object-cover product-image">
+                            <button class="absolute top-2 right-2 bg-white/50 backdrop-blur-sm p-2 rounded-full text-gray-700 hover:bg-white hover:text-pink-500 transition-all duration-300">
+                                <i data-feather="heart" class="w-5 h-5"></i>
+                            </button>
+                            <div class="absolute bottom-0 left-0 right-0 p-2 add-to-cart-btn">
+                                <button class="w-full bg-black text-white text-sm font-bold py-2.5 rounded-md hover:bg-gray-800 transition-colors duration-300">Quick Add</button>
+                            </div>
+                        </div>
+                        <div class="mt-3 text-center">
+                            <h3 class="text-sm font-semibold text-gray-800">Platform Sandals</h3>
+                            <p class="text-md font-bold text-gray-900 mt-1">$55.00</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-12">
+                    <button class="bg-gray-900 text-white font-bold py-3 px-10 rounded-full hover:bg-gray-700 transition duration-300 transform hover:scale-105">
+                        View All
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Newsletter Signup Section -->
+        <section class="bg-pink-500 text-white py-20">
+            <div class="container mx-auto px-4 text-center scroll-observer">
+                <h2 class="text-4xl font-extrabold tracking-tight mb-3">JOIN THE CLUB</h2>
+                <p class="max-w-xl mx-auto mb-8">Get 15% off your first order and be the first to know about new arrivals, sales & promos!</p>
+                <form class="max-w-md mx-auto flex">
+                    <input type="email" placeholder="Enter your email" class="w-full rounded-l-full py-3 px-6 text-gray-800 focus:outline-none focus:ring-2 focus:ring-white">
+                    <button type="submit" class="bg-black text-white font-bold py-3 px-8 rounded-r-full hover:bg-gray-800 transition-colors duration-300">Subscribe</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white pt-16 pb-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+                <!-- Company Info -->
+                <div>
+                    <h4 class="font-bold text-lg mb-4">COMPANY INFO</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition">About STYLEVOX</a></li>
+                        <li><a href="#" class="hover:text-white transition">Careers</a></li>
+                        <li><a href="#" class="hover:text-white transition">Social Responsibility</a></li>
+                        <li><a href="#" class="hover:text-white transition">Affiliate Program</a></li>
+                    </ul>
+                </div>
+                <!-- Help & Support -->
+                <div>
+                    <h4 class="font-bold text-lg mb-4">HELP & SUPPORT</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition">Shipping Info</a></li>
+                        <li><a href="#" class="hover:text-white transition">Returns & Exchanges</a></li>
+                        <li><a href="#" class="hover:text-white transition">How to Order</a></li>
+                        <li><a href="#" class="hover:text-white transition">Contact Us</a></li>
+                    </ul>
+                </div>
+                <!-- Customer Care -->
+                <div>
+                    <h4 class="font-bold text-lg mb-4">CUSTOMER CARE</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition">Track Your Order</a></li>
+                        <li><a href="#" class="hover:text-white transition">Size Guide</a></li>
+                        <li><a href="#" class="hover:text-white transition">FAQs</a></li>
+                    </ul>
+                </div>
+                <!-- Social & Apps -->
+                <div>
+                    <h4 class="font-bold text-lg mb-4">FIND US ON</h4>
+                    <div class="flex space-x-4 mb-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i data-feather="facebook" class="w-6 h-6"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i data-feather="instagram" class="w-6 h-6"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i data-feather="twitter" class="w-6 h-6"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i data-feather="youtube" class="w-6 h-6"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
+                <p>&copy; 2025 STYLEVOX. All Rights Reserved.</p>
+                <div class="flex space-x-4 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-white transition">Terms & Conditions</a>
+                    <a href="#" class="hover:text-white transition">Privacy Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <script>
+        // Initialize Feather Icons
+        feather.replace();
+
+        // Scroll Animation Logic
+        const scrollObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in-element');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.scroll-observer').forEach(el => {
+            scrollObserver.observe(el);
+        });
+        
+        // Mobile Menu Logic
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+
+        function toggleMenu() {
+            mobileMenu.classList.toggle('-translate-x-full');
+            mobileMenuOverlay.classList.toggle('hidden');
+            document.body.classList.toggle('overflow-hidden');
+        }
+
+        mobileMenuToggle.addEventListener('click', toggleMenu);
+        mobileMenuOverlay.addEventListener('click', toggleMenu);
+
+    </script>
+</body>
+</html>
