@@ -1,498 +1,295 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TERMINAL ACCESS</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts: VT323 for retro terminal look -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-    
-    <!-- Feather Icons -->
-    <script src="https://unpkg.com/feather-icons"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SHEIN QR Access</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: #000;
+      font-family: 'Courier New', monospace;
+      overflow: hidden;
+      color: #00ff88;
+    }
 
-    <style>
-        /* Custom styles for the hacker theme */
-        body {
-            font-family: 'VT323', monospace;
-            background-color: #0d0d0d;
-            color: #00ff41;
-            text-shadow: 0 0 5px #00ff41, 0 0 10px #00ff41;
-        }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+      opacity: 0.5;
+    }
 
-        /* Matrix background effect */
-        #matrix-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.3;
-        }
+    .navbar {
+      background-color: #000;
+      padding: 10px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #00ff88;
+      z-index: 2;
+      position: relative;
+    }
 
-        /* Blinking cursor effect */
-        .blinking-cursor {
-            animation: blink 1s step-end infinite;
-        }
-        @keyframes blink {
-            from, to { border-right-color: transparent; }
-            50% { border-right-color: #00ff41; }
-        }
+    .nav-toggle {
+      background: none;
+      border: none;
+      color: #00ff88;
+      font-size: 1.5rem;
+      cursor: pointer;
+      display: none;
+    }
 
-        /* Glitch effect for text */
-        @keyframes glitch {
-            2%, 64% { transform: translate(2px, 0) skew(0deg); }
-            4%, 60% { transform: translate(-2px, 0) skew(0deg); }
-            62% { transform: translate(0, 0) skew(5deg); }
-        }
-        .glitch {
-            animation: glitch 1s linear infinite;
-        }
+    .nav-items {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 10px;
+      border-top: 1px solid #00ff88;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 2;
+      position: relative;
+    }
 
-        /* Custom UI elements styling */
-        .terminal-window {
-            background: rgba(0, 0, 0, 0.75);
-            border: 1px solid #00ff41;
-            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
-            backdrop-filter: blur(5px);
-        }
-        .terminal-button {
-            background-color: transparent;
-            border: 1px solid #00ff41;
-            color: #00ff41;
-            text-shadow: inherit;
-            transition: all 0.3s ease;
-        }
-        .terminal-button:hover {
-            background-color: #00ff41;
-            color: #0d0d0d;
-            text-shadow: none;
-            box-shadow: 0 0 20px #00ff41;
-        }
-        .terminal-input {
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid #00ff41;
-            color: #00ff41;
-            text-shadow: inherit;
-        }
-        .terminal-input:focus {
-            outline: none;
-            box-shadow: 0 1px 0 #00ff41;
-        }
-        
-        /* Game button styles */
-        .game-btn {
-            transition: all 0.1s ease-in-out;
-        }
-        .game-btn.active {
-            filter: brightness(2.5);
-            transform: scale(1.05);
-        }
-    </style>
+    .nav-item {
+      background-color: transparent;
+      color: #00ff88;
+      border: 1px solid #00ff88;
+      border-radius: 6px;
+      padding: 10px 16px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+
+    .nav-item:hover {
+      background-color: #00ff8833;
+    }
+
+    @media (max-width: 768px) {
+      .nav-toggle { display: block; }
+      .nav-items {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+      }
+      .nav-items.show { display: flex; }
+      .nav-item { width: 100%; text-align: center; }
+    }
+        .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: calc(100vh - 64px);
+      padding: 20px;
+      z-index: 2;
+      position: relative;
+    }
+
+    .card, .error-box {
+      background-color: rgba(0, 0, 0, 0.85);
+      border: 1px solid #00ff88;
+      padding: 30px;
+      border-radius: 20px; /* Increased for smoother edges */
+      box-shadow: 0 0 15px #00ff88aa;
+      text-align: left;
+      max-width: 450px;
+      width: 100%;
+    }
+
+    .logo {
+      font-weight: bold;
+      font-size: 1.4rem;
+      text-align: center;
+      margin-bottom: 20px;
+      color: #00ff88;
+      text-shadow: 0 0 5px #00ff88;
+    }
+
+    h2 {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 0.95rem;
+      margin: 6px 0;
+    }
+
+    .receipt {
+      background: #001f1f;
+      padding: 10px 15px;
+      border-radius: 6px;
+      margin-top: 15px;
+      font-size: 0.95rem;
+      font-family: monospace;
+    }
+
+    .warning-message {
+      margin-top: 25px; /* Added spacing */
+      margin-bottom: 15px; /* Added spacing */
+      font-size: 1rem;
+      color: #ff3333; /* A strong warning red */
+      font-weight: bold;
+      text-align: center;
+      text-shadow: 0 0 8px #ff3333; /* Intense glow */
+      animation: pulse-warning 1.8s infinite alternate; /* New animation for warning */
+    }
+
+    .btn {
+      margin-top: 20px;
+      display: block;
+      width: 100%;
+      background-color: transparent;
+      color: #00ff88;
+      padding: 14px;
+      font-weight: bold;
+      border: 1px solid #00ff88;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #00ff8833;
+    }
+
+    .btn.secondary {
+      background-color: transparent;
+      color: #00ff88;
+      margin-top: 10px;
+    }
+
+    .btn.secondary:hover {
+      background-color: #003333;
+    }
+
+    .expired, .error-message {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #ff4444;
+      font-weight: bold;
+      padding: 20px;
+    }
+
+    /* New animation for the warning message */
+    @keyframes pulse-warning {
+        0% { text-shadow: 0 0 5px #ff3333, 0 0 10px #ff3333; }
+        100% { text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000; }
+    }
+  </style>
 </head>
-<body class="overflow-hidden">
+<body>
+  <canvas id="matrix"></canvas>
 
-    <canvas id="matrix-bg"></canvas>
+  <div class="navbar">
+    <span style="color: #00ff88; font-weight: bold;">SHEIN</span>
+    <button class="nav-toggle" onclick="toggleMenu()">☰</button>
+  </div>
 
-    <!-- Login Screen -->
-    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 terminal-window">
-        <div class="w-full max-w-sm text-center">
-            <h1 id="login-title" class="text-4xl md:text-5xl mb-8"></h1>
-            <form id="login-form" class="space-y-6">
-                <div>
-                    <label for="username" class="block text-left mb-2 text-lg">> USERNAME:</label>
-                    <input type="text" id="username" class="terminal-input w-full p-2 text-xl" required>
-                </div>
-                <div>
-                    <label for="password" class="block text-left mb-2 text-lg">> PASSWORD:</label>
-                    <input type="password" id="password" class="terminal-input w-full p-2 text-xl" required>
-                </div>
-                <button type="submit" class="terminal-button w-full py-3 text-2xl mt-4">[INITIATE CONNECTION]</button>
-            </form>
-            <p id="login-status" class="mt-4 text-lg h-6"></p>
-        </div>
+  <div class="nav-items" id="navItems">
+    <a href="nopermission.html" class="nav-item">PICK 3, 1 FREE</a>
+    <a href="nopermission.html" class="nav-item">5K NEW USER CREDITS</a>
+    <a href="nopermission.html" class="nav-item">3 FREE GIFTS</a>
+    <a href="nopermission.html" class="nav-item">CREDIT BACK</a>
+    <a href="nopermission.html" class="nav-item">DISCOUNT DASH (99% OFF)</a>
+  </div>
+
+  <div class="container">
+    <div class="card" id="contentCard" style="display: none;">
+      <div class="logo">SHEIN | QR Ownership</div>
+      <h2>Verified Purchaser Details:</h2>
+      <p><strong>Name:</strong> (hidden, encrypted)</p>
+      <p><strong>RA Facebook Link:</strong> (hidden, encrypted)</p>
+      <div class="receipt">Purchase # Receipt: <strong>calix-00008</strong></div>
+
+      <div class="warning-message">
+        <p><strong>Attention! Your exclusive QR link will be disabled upon expiry.</strong></p>
+        <p>You still have ₱1,000 unpaid balance.</p>
+      </div>
+
+      <button class="btn" onclick="confirm()">Confirm</button>
+      <button class="btn secondary" onclick="checkExpiry()">Check Expiry</button>
     </div>
 
-    <!-- Main Interface (hidden by default) -->
-    <main id="main-interface" class="hidden h-screen flex flex-col">
-        <!-- Header -->
-        <header class="terminal-window flex justify-between items-center p-3 text-sm flex-shrink-0">
-            <div>
-                <p>STATUS: <span class="text-yellow-400">SECURE_CHANNEL_ESTABLISHED</span></p>
-                <p>USER: <span id="display-username" class="text-white"></span></p>
-                <p>UID: <span id="display-userid" class="text-white text-xs"></span></p>
-            </div>
-            <button id="logout-btn" class="terminal-button px-4 py-2">[LOGOUT]</button>
-        </header>
+    <div class="error-box" id="errorBox" style="display: none;">
+      <div class="logo">ACCESS BLOCKED</div>
+      <p class="error-message">⛔ Error! Please use SHEIN app to access this event.</p>
+    </div>
 
-        <!-- Content Area -->
-        <div class="flex-grow p-4 md:p-6 overflow-y-auto">
-            <div id="game-container" class="terminal-window p-6 max-w-2xl mx-auto text-center">
-                <h2 id="game-title" class="text-3xl mb-4">ACCESS PROTOCOL: MEMORY_GRID</h2>
-                <p id="game-instructions" class="mb-6">REPEAT THE SEQUENCE TO GAIN SYSTEM ACCESS. FAILURE RESULTS IN LOCKOUT.</p>
-                
-                <div id="game-grid" class="grid grid-cols-2 gap-4 max-w-sm mx-auto mb-6">
-                    <button data-key="0" class="game-btn h-24 md:h-32 rounded-lg" style="background-color: #1d4ed8;"></button>
-                    <button data-key="1" class="game-btn h-24 md:h-32 rounded-lg" style="background-color: #b91c1c;"></button>
-                    <button data-key="2" class="game-btn h-24 md:h-32 rounded-lg" style="background-color: #15803d;"></button>
-                    <button data-key="3" class="game-btn h-24 md:h-32 rounded-lg" style="background-color: #facc15;"></button>
-                </div>
+    <div id="expiredMessage" class="expired" style="display: none;">
+      ⛔ This page has expired. Access is no longer available.
+    </div>
+  </div>
+    <script>
+    function confirm() {
+      window.location.href = "https://itzmebenz13.github.io/final-gate/index-hs8.html";
+    }
 
-                <p id="game-status" class="text-xl h-8 mb-4">LEVEL: <span id="level-display">1</span></p>
-                <button id="start-game-btn" class="terminal-button px-8 py-3 text-2xl">[START TEST]</button>
-            </div>
+    function checkExpiry() {
+      window.location.href = "countdown-2.html";
+    }
 
-            <div id="access-granted-container" class="hidden terminal-window p-6 max-w-2xl mx-auto text-center">
-                <h2 class="text-4xl text-green-400 mb-4 glitch">ACCESS GRANTED</h2>
-                <p class="text-xl mb-2">EXCLUSIVE LINK UNLOCKED.</p>
-                <a id="exclusive-link" href="https://hchejes.itzmebenz13.workers.dev/" target="_blank" class="terminal-button inline-block px-8 py-3 text-2xl my-4">[ACCESS PAYLOAD]</a>
-                <p class="text-lg">TIME REMAINING:</p>
-                <p id="countdown-timer" class="text-3xl font-bold my-2"></p>
-                <p class="text-sm text-yellow-400">NOTE: THIS IS A ONE-TIME ACCESS LINK. DO NOT CLOSE THE TARGET WINDOW.</p>
-            </div>
-        </div>
-    </main>
+    function toggleMenu() {
+      document.getElementById("navItems").classList.toggle("show");
+    }
+
+    const ua = navigator.userAgent.toLowerCase();
+    const isShein = ua.includes("shein") || ua.includes("zzkko");
     
-    <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    // Define the specific expiry date
+    const expiryDate = new Date("2025-07-17T23:59:59"); // Sets expiry to July 17, 2025, at 11:59:59 PM
 
-        // --- CONFIG & INITIALIZATION ---
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "DEMO", authDomain: "DEMO", projectId: "DEMO" };
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'hacker-game-default';
-        
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+    const now = new Date();
 
-        let currentUser = null;
-        let userId = null;
+    if (now >= expiryDate) {
+      document.getElementById("expiredMessage").style.display = "block";
+    } else if (isShein) {
+      document.getElementById("contentCard").style.display = "block";
+    } else {
+      document.getElementById("errorBox").style.display = "block";
+    }
 
-        // --- UI ELEMENTS ---
-        const loginScreen = document.getElementById('login-screen');
-        const mainInterface = document.getElementById('main-interface');
-        const loginForm = document.getElementById('login-form');
-        const usernameInput = document.getElementById('username');
-        const loginStatus = document.getElementById('login-status');
-        const logoutBtn = document.getElementById('logout-btn');
-        const displayUsername = document.getElementById('display-username');
-        const displayUserid = document.getElementById('display-userid');
+    // Matrix background animation
+    const canvas = document.getElementById("matrix");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-        const gameContainer = document.getElementById('game-container');
-        const accessGrantedContainer = document.getElementById('access-granted-container');
-        const countdownTimer = document.getElementById('countdown-timer');
-        const startGameBtn = document.getElementById('start-game-btn');
-        const levelDisplay = document.getElementById('level-display');
-        const gameStatus = document.getElementById('game-status');
-        const gameGrid = document.getElementById('game-grid');
-        
-        // --- GAME LOGIC ---
-        let sequence = [];
-        let playerSequence = [];
-        let level = 1;
-        let gameActive = false;
-        let countdownInterval;
+    const columns = canvas.width / 20;
+    const drops = Array(Math.floor(columns)).fill(1);
+    const characters = "アァイィウヴエェオカサタナハマヤラワ0123456789";
 
-        const PRIZES = {
-            3: { duration: 30 * 60 * 1000, chance: 0.8 }, // 30 minutes
-            5: { duration: 60 * 60 * 1000, chance: 0.5 }, // 1 hour
-            7: { duration: 3 * 60 * 60 * 1000, chance: 0.2 }, // 3 hours
-            9: { duration: 24 * 60 * 60 * 1000, chance: 0.05 } // 1 day
-        };
+    function drawMatrix() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#00ff88";
+      ctx.font = "16px monospace";
 
-        // --- HELPER FUNCTIONS ---
-        function typeWriter(element, text, speed = 50) {
-            let i = 0;
-            element.innerHTML = "";
-            element.classList.add('blinking-cursor');
-            function type() {
-                if (i < text.length) {
-                    element.innerHTML += text.charAt(i);
-                    i++;
-                    setTimeout(type, speed);
-                } else {
-                    element.classList.remove('blinking-cursor');
-                }
-            }
-            type();
+      drops.forEach((y, i) => {
+        const text = characters.charAt(Math.floor(Math.random() * characters.length));
+        const x = i * 20;
+        ctx.fillText(text, x, y * 20);
+
+        if (y * 20 > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
         }
 
-        // --- AUTHENTICATION & DATA ---
-        async function checkUserAccess() {
-            if (!userId) return;
-            const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/gameAccess`);
-            const docSnap = await getDoc(userDocRef);
+        drops[i]++;
+      });
+    }
 
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                const expires = data.accessExpires.toDate();
-                if (expires > new Date()) {
-                    showAccessGranted(expires);
-                } else {
-                    showGame();
-                }
-            } else {
-                showGame();
-            }
-        }
+    setInterval(drawMatrix, 33);
 
-        function showAccessGranted(expires) {
-            gameContainer.classList.add('hidden');
-            accessGrantedContainer.classList.remove('hidden');
-            
-            if(countdownInterval) clearInterval(countdownInterval);
-
-            countdownInterval = setInterval(() => {
-                const now = new Date();
-                const distance = expires.getTime() - now.getTime();
-
-                if (distance < 0) {
-                    clearInterval(countdownInterval);
-                    countdownTimer.textContent = "EXPIRED";
-                    setTimeout(showGame, 3000);
-                    return;
-                }
-
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                
-                countdownTimer.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-                if (days > 0) {
-                    countdownTimer.textContent = `${days}d ${countdownTimer.textContent}`;
-                }
-
-            }, 1000);
-        }
-
-        function showGame() {
-            gameContainer.classList.remove('hidden');
-            accessGrantedContainer.classList.add('hidden');
-            if(countdownInterval) clearInterval(countdownInterval);
-            resetGame();
-        }
-
-        async function grantAccess(duration) {
-            const userDocRef = doc(db, `artifacts/${appId}/users/${userId}/gameAccess`);
-            const expirationTime = new Date(Date.now() + duration);
-            await setDoc(userDocRef, { accessExpires: expirationTime, grantedAt: serverTimestamp() });
-            showAccessGranted(expirationTime);
-        }
-
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
-                userId = user.uid;
-                
-                const userProfileRef = doc(db, `artifacts/${appId}/users/${userId}/profile`);
-                const profileSnap = await getDoc(userProfileRef);
-                let username = "ANONYMOUS";
-                if (profileSnap.exists()) {
-                    username = profileSnap.data().username;
-                } else {
-                    // If profile doesn't exist, create it from input
-                    const storedUsername = localStorage.getItem('hacker_username');
-                    if (storedUsername) {
-                        username = storedUsername;
-                        await setDoc(userProfileRef, { username: username });
-                    }
-                }
-                
-                displayUsername.textContent = username;
-                displayUserid.textContent = userId;
-                loginScreen.classList.add('hidden');
-                mainInterface.classList.remove('hidden');
-                mainInterface.classList.add('flex');
-                
-                await checkUserAccess();
-
-            } else {
-                currentUser = null;
-                userId = null;
-                loginScreen.classList.remove('hidden');
-                mainInterface.classList.add('hidden');
-                mainInterface.classList.remove('flex');
-            }
-        });
-
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = usernameInput.value;
-            typeWriter(loginStatus, "AUTHENTICATING...", 30);
-            
-            try {
-                // Store username for retrieval after auth state change
-                localStorage.setItem('hacker_username', username);
-
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-                typeWriter(loginStatus, "CONNECTION ESTABLISHED.", 30);
-            } catch (error) {
-                console.error("Login failed:", error);
-                typeWriter(loginStatus, `ERROR: ${error.code}`, 30);
-            }
-        });
-
-        logoutBtn.addEventListener('click', () => {
-            signOut(auth);
-            localStorage.removeItem('hacker_username');
-        });
-
-        // --- GAME IMPLEMENTATION ---
-        
-        function resetGame() {
-            sequence = [];
-            playerSequence = [];
-            level = 1;
-            gameActive = false;
-            levelDisplay.textContent = level;
-            startGameBtn.disabled = false;
-            typeWriter(gameStatus, "AWAITING TEST INITIATION.", 30);
-        }
-
-        async function nextLevel() {
-            levelDisplay.textContent = level;
-            playerSequence = [];
-            gameGrid.style.pointerEvents = 'none';
-            typeWriter(gameStatus, `GENERATING LEVEL ${level} SEQUENCE...`, 20);
-
-            sequence.push(Math.floor(Math.random() * 4));
-
-            await playSequence();
-            
-            gameGrid.style.pointerEvents = 'auto';
-            typeWriter(gameStatus, "YOUR TURN. REPLICATE SEQUENCE.", 30);
-        }
-
-        async function playSequence() {
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Pause before showing
-            for (const key of sequence) {
-                const button = document.querySelector(`.game-btn[data-key='${key}']`);
-                button.classList.add('active');
-                await new Promise(resolve => setTimeout(resolve, 400));
-                button.classList.remove('active');
-                await new Promise(resolve => setTimeout(resolve, 200));
-            }
-        }
-
-        function handlePlayerInput(key) {
-            if (!gameActive) return;
-            
-            const button = document.querySelector(`.game-btn[data-key='${key}']`);
-            button.classList.add('active');
-            setTimeout(() => button.classList.remove('active'), 150);
-
-            playerSequence.push(parseInt(key));
-            const currentStep = playerSequence.length - 1;
-
-            if (playerSequence[currentStep] !== sequence[currentStep]) {
-                gameOver();
-                return;
-            }
-
-            if (playerSequence.length === sequence.length) {
-                levelWon();
-            }
-        }
-
-        async function levelWon() {
-            typeWriter(gameStatus, "SEQUENCE CORRECT. ADVANCING...", 30);
-            gameGrid.style.pointerEvents = 'none';
-            
-            // Check for prize
-            const prizeInfo = PRIZES[level];
-            if (prizeInfo && Math.random() < prizeInfo.chance) {
-                typeWriter(gameStatus, `SYSTEM BREACH! ACCESS GRANTED FOR ${prizeInfo.duration / (60*1000)} MINS`, 30);
-                await grantAccess(prizeInfo.duration);
-                gameActive = false;
-                startGameBtn.disabled = false;
-                return;
-            }
-            
-            level++;
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            nextLevel();
-        }
-
-        function gameOver() {
-            typeWriter(gameStatus, "SEQUENCE MISMATCH. CONNECTION TERMINATED.", 30);
-            gameActive = false;
-            startGameBtn.disabled = false;
-            gameGrid.style.pointerEvents = 'auto';
-            // Optional: add a small lockout
-            setTimeout(resetGame, 3000);
-        }
-
-        startGameBtn.addEventListener('click', () => {
-            resetGame();
-            gameActive = true;
-            startGameBtn.disabled = true;
-            nextLevel();
-        });
-
-        gameGrid.addEventListener('click', (e) => {
-            if (e.target.matches('.game-btn')) {
-                handlePlayerInput(e.target.dataset.key);
-            }
-        });
-
-
-        // --- MATRIX BACKGROUND SCRIPT ---
-        const canvas = document.getElementById('matrix-bg');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}';
-        const fontSize = 16;
-        const columns = canvas.width / fontSize;
-        const drops = Array(Math.floor(columns)).fill(1);
-
-        function drawMatrix() {
-            ctx.fillStyle = 'rgba(13, 13, 13, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#00ff41';
-            ctx.font = `${fontSize}px VT323`;
-
-            for (let i = 0; i < drops.length; i++) {
-                const text = letters[Math.floor(Math.random() * letters.length)];
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                drops[i]++;
-            }
-        }
-        setInterval(drawMatrix, 33);
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            drops.length = 0; // reset drops
-            const newColumns = canvas.width / fontSize;
-            for(let i=0; i < newColumns; i++) {
-                drops.push(1);
-            }
-        });
-
-        // --- INITIAL LOAD ---
-        window.onload = () => {
-            typeWriter(document.getElementById('login-title'), "AWAITING SECURE CONNECTION...", 75);
-            feather.replace();
-        };
-
-    </script>
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
 </body>
 </html>
