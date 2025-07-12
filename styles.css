@@ -1,0 +1,255 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+header {
+    background: linear-gradient(90deg, #ff8a80, #ff5252);
+    color: white;
+    padding: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-arrow {
+    font-size: 24px;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.user-allowance {
+    display: flex;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 5px 10px;
+}
+
+.user-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.user-icon img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.user-icon span {
+    font-size: 12px;
+}
+
+.allowance {
+    display: flex;
+    flex-direction: column;
+}
+
+.allowance .amount {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.allowance .title {
+    font-size: 14px;
+}
+
+.allowance .subtitle {
+    font-size: 10px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+    padding: 5px 10px;
+}
+
+.gift-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+}
+
+.countdown {
+    font-size: 12px;
+    margin-right: 5px;
+}
+
+.rules {
+    font-size: 12px;
+    text-decoration: underline;
+}
+
+.search-bar {
+    padding: 10px;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 20px;
+    border: none;
+    box-sizing: border-box;
+}
+
+main {
+    padding: 10px;
+    padding-bottom: 120px; /* Space for footer */
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.product-card {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+.product-card img {
+    width: 100%;
+    display: block;
+}
+
+.product-card p {
+    margin: 10px;
+    font-size: 14px;
+}
+
+.allowance-tag {
+    background-color: #ffebee;
+    color: #c62828;
+    font-size: 12px;
+    padding: 2px 5px;
+    border-radius: 4px;
+    margin: 0 10px;
+    display: inline-block;
+}
+
+.price {
+    margin: 10px;
+    display: flex;
+    align-items: baseline;
+}
+
+.original-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 14px;
+    margin-right: 5px;
+}
+
+.new-price {
+    color: #ff5252;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.pick-button {
+    background-color: #ff5252;
+    color: white;
+    border: none;
+    padding: 10px;
+    width: calc(100% - 20px);
+    margin: 10px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.special-banner {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 2px 8px;
+    font-size: 12px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+}
+
+.pick-first-item {
+    background: linear-gradient(90deg, #ffc107, #ff9800);
+    text-align: center;
+    padding: 5px;
+    color: #333;
+}
+
+.pick-first-item p {
+    margin: 0;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.pick-first-item div {
+    font-size: 12px;
+}
+
+.hundred-percent {
+    background-color: #fff;
+    color: #ff9800;
+    padding: 2px 5px;
+    border-radius: 4px;
+    margin-right: 5px;
+}
+
+.bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px;
+    border-top: 1px solid #eee;
+}
+
+.nav-item {
+    text-align: center;
+}
+
+.nav-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.cart-icon {
+    width: 28px;
+    height: 28px;
+}
+
+.free-button-container {
+    width: 100px;
+}
+
+.free-button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+}
